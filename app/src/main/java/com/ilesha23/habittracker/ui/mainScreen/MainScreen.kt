@@ -66,7 +66,9 @@ import com.ilesha23.habittracker.ui.theme.actorFontFamily
 
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    onSettingsClick: () -> Unit = {},
+    onBacClick: () -> Unit = {}
 ) {
     var shouldShowDialog by rememberSaveable { mutableStateOf(false) }
     val startDateFormatted = viewModel.dateStartFormatted.collectAsState().value
@@ -77,9 +79,8 @@ fun MainScreen(
     val archiveList = viewModel.archiveList.collectAsState().value
 
     BackHandler {
-        // TODO:
+        onBacClick()
     }
-
 
     if (shouldShowDialog) {
         CustomDialog(
@@ -110,6 +111,9 @@ fun MainScreen(
     MainScreenContent(
         activeList = activeList,
         archiveList = archiveList,
+        onSettingsClick = {
+            onSettingsClick()
+        },
         onDialogClick = {
             shouldShowDialog = true
         }
@@ -120,10 +124,9 @@ fun MainScreen(
 fun MainScreenContent(
     activeList: List<HabitItem>,
     archiveList: List<HabitItem>,
+    onSettingsClick: () -> Unit = {},
     onDialogClick: () -> Unit = {}
 ) {
-
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -148,7 +151,7 @@ fun MainScreenContent(
             ) {
                 IconButton(
                     onClick = {
-
+                        onSettingsClick()
                     },
                     modifier = Modifier
                         .fillMaxHeight()

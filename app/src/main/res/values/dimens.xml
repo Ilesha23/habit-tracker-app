@@ -8,4 +8,7 @@
     <!-- Main screen -->
     <dimen name="main_screen_header_padding_start">10dp</dimen>
 
+    <!-- Settings screen -->
+    <dimen name="settings_screen_button_padding">15dp</dimen>
+
 </resources>

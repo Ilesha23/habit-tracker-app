@@ -24,4 +24,8 @@
     <string name="main_screen_dialog_cancel">Cancel</string>
     <string name="main_screen_dialog_accept">Accept</string>
 
+    <!-- Settings screen -->
+    <string name="settings_screen_button_privacy">Privacy policy</string>
+    <string name="settings_screen_button_contact">Contact us</string>
+
 </resources>

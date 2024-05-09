@@ -15,10 +15,12 @@ data class HabitItem(
     val isPositive: Boolean = true
 ) {
     val formattedStartedDate: String
-        get() = SimpleDateFormat("dd\nMMM\nyyyy", Locale.getDefault()).format(dateStarted).uppercase()
+        get() = SimpleDateFormat("dd\nMMM\nyyyy", Locale.getDefault()).format(dateStarted)
+            .uppercase()
 
     val formattedCutoffDate: String
-        get() = SimpleDateFormat("dd\nMMM\nyyyy", Locale.getDefault()).format(dateCutOff).uppercase()
+        get() = SimpleDateFormat("dd\nMMM\nyyyy", Locale.getDefault()).format(dateCutOff)
+            .uppercase()
 
     val daysPassed: Long
         get() = ((Calendar.getInstance().time.time - dateStarted) / (1000 * 60 * 60 * 24))

@@ -17,7 +17,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             HabitTrackerTheme {
-                Navigation()
+                Navigation(
+                    onClose = {
+                        finish() // yes, maybe that's a bad solution, but simple popupto navigation didn't work for me and i had deadline :(
+                    }
+                )
             }
         }
     }

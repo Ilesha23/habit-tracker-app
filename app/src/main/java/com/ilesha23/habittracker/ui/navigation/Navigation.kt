@@ -1,5 +1,6 @@
 package com.ilesha23.habittracker.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -7,15 +8,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ilesha23.habittracker.ui.mainScreen.MainScreen
 import com.ilesha23.habittracker.ui.onboardingScreen.OnBoardingScreen
+import com.ilesha23.habittracker.ui.settingsScreen.SettingsScreen
 import com.ilesha23.habittracker.ui.splashScreen.SplashScreen
 
 @Composable
-fun Navigation() {
+fun Navigation(
+    onClose: () -> Unit = {}
+) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Screen.Splash.route) {
 
-        // TODO: remove from stack
         composable(Screen.Splash.route) {
             SplashScreen(
                 onOnboardingNavigate = {
@@ -27,6 +30,7 @@ fun Navigation() {
                     navController.performIfCurrentDestinationDoesntMatch(Screen.Main.route) {
                         navigate(Screen.Main.route)
                     }
+                    Log.d("LOG_TAG", navController.currentBackStack.value.toString())
                 }
             )
         }
@@ -42,11 +46,27 @@ fun Navigation() {
         }
 
         composable(Screen.Main.route) {
-            MainScreen()
+            MainScreen(
+                onSettingsClick = {
+                    navController.performIfCurrentDestinationDoesntMatch(Screen.Settings.route) {
+                        navigate(Screen.Settings.route)
+                    }
+                },
+                onBacClick = {
+                    onClose()
+                    Log.d("LOG_TAG", navController.currentBackStack.value.toString())
+                }
+            )
         }
 
         composable(Screen.Settings.route) {
-
+            SettingsScreen(
+                onBackClick = {
+                    navController.performIfCurrentDestinationDoesntMatch(Screen.Main.route) {
+                        navigateUp()
+                    }
+                }
+            )
         }
 
     }
@@ -58,16 +78,5 @@ fun NavController.performIfCurrentDestinationDoesntMatch(
 ) {
     if (currentDestination?.route != secondDestination) {
         action()
-    }
-}
-
-fun NavController.navigateWithPopUp(
-    popUpTo: String,
-    route: String = popUpTo
-) {
-    navigate(route = route) {
-        popUpTo(popUpTo) {
-            inclusive = popUpTo == route
-        }
     }
 }
