@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Onboarding screen -->
+    <dimen name="onboarding_screen_button_vertical_padding">10dp</dimen>
+    <dimen name="onboarding_screen_button_horizontal_padding">30dp</dimen>
+
+    <!-- Main screen -->
+    <dimen name="main_screen_header_padding_start">10dp</dimen>
+
+</resources>

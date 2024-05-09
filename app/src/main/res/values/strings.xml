@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">HabitTracker</string>
+
+    <!-- Splash screen -->
+    <string name="splash_screen_hello">Hello</string>
+
+    <!-- OnBoarding screen -->
+    <string name="onboarding_screen_welcome">Welcome!</string>
+    <string name="onboarding_screen_info">By clicking accept, you agree to our privacy policy, which sets out what data we collect and process.</string>
+    <string name="onboarding_screen_button_accept">Accept</string>
+
+    <!-- Main Screen -->
+    <string name="main_screen_active_habits">Active habits</string>
+    <string name="main_screen_archive_habits">Archive habits</string>
+    <string name="main_screen_started">started on</string>
+    <string name="main_screen_passed">have passed</string>
+    <string name="main_screen_cutoff">cut-off date</string>
+
 </resources>

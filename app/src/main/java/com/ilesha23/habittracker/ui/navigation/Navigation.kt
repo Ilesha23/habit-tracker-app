@@ -5,6 +5,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ilesha23.habittracker.ui.mainScreen.MainScreen
+import com.ilesha23.habittracker.ui.onboardingScreen.OnBoardingScreen
+import com.ilesha23.habittracker.ui.splashScreen.SplashScreen
 
 @Composable
 fun Navigation() {
@@ -12,16 +15,34 @@ fun Navigation() {
 
     NavHost(navController = navController, startDestination = Screen.Splash.route) {
 
-        composable(Screen.Onboarding.route) {
-
+        // TODO: remove from stack
+        composable(Screen.Splash.route) {
+            SplashScreen(
+                onOnboardingNavigate = {
+                    navController.performIfCurrentDestinationDoesntMatch(Screen.Onboarding.route) {
+                        navigate(Screen.Onboarding.route)
+                    }
+                },
+                onMainNavigate = {
+                    navController.performIfCurrentDestinationDoesntMatch(Screen.Main.route) {
+                        navigate(Screen.Main.route)
+                    }
+                }
+            )
         }
 
         composable(Screen.Onboarding.route) {
-
+            OnBoardingScreen(
+                onNavigate = {
+                    navController.performIfCurrentDestinationDoesntMatch(Screen.Main.route) {
+                        navigate(Screen.Main.route)
+                    }
+                }
+            )
         }
 
         composable(Screen.Main.route) {
-
+            MainScreen()
         }
 
         composable(Screen.Settings.route) {
