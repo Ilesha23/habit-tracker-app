@@ -50,7 +50,7 @@ fun SettingsScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.fillMaxHeight(0.05f))
+        Spacer(modifier = Modifier.fillMaxHeight(0.03f))
 
         Row(
             modifier = Modifier
@@ -81,7 +81,7 @@ fun SettingsScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .fillMaxHeight(0.9f),
+                .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

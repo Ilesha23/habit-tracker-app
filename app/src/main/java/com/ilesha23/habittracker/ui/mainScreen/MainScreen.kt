@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,9 +18,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,6 +49,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
@@ -61,6 +66,7 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ilesha23.habittracker.R
 import com.ilesha23.habittracker.data.model.HabitItem
+import com.ilesha23.habittracker.ui.theme.Blue
 import com.ilesha23.habittracker.ui.theme.abeezeeFontFamily
 import com.ilesha23.habittracker.ui.theme.actorFontFamily
 
@@ -140,7 +146,7 @@ fun MainScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.95f)
-                .fillMaxHeight(0.95f)
+                .fillMaxHeight(0.97f)
         ) {
 
             Row(
@@ -191,7 +197,7 @@ fun MainScreenContent(
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
 
@@ -340,6 +346,7 @@ fun HabitItem(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CustomDialog(
     dateStartFormatted: String,
@@ -355,8 +362,6 @@ fun CustomDialog(
     var text by remember { mutableStateOf("") }
     var showDateStartDialog by remember { mutableStateOf(false) }
     var showDateFinishDialog by remember { mutableStateOf(false) }
-
-    val isKeyboardOpened by keyboardAsState()
 
     if (showDateStartDialog) {
         DatePickerDialog(
@@ -398,9 +403,9 @@ fun CustomDialog(
                     color = MaterialTheme.colorScheme.onTertiary
                 ),
             contentAlignment =
-            if (isKeyboardOpened) {
-                Alignment.TopCenter
-            } else Alignment.Center
+                if (WindowInsets.isImeVisible) {
+                    Alignment.TopCenter
+                } else Alignment.Center
         ) {
 
             Column(
@@ -452,7 +457,8 @@ fun CustomDialog(
                                 else BorderStroke(0.dp, Color.Transparent)
                             ) {
                                 Text(
-                                    text = stringResource(id = R.string.main_screen_dialog_positive),
+                                    text = stringResource(id = R.string.main_screen_dialog_positive).uppercase(),
+                                    style = MaterialTheme.typography.headlineSmall,
                                     modifier = Modifier
                                         .padding(
                                             vertical = dimensionResource(id = R.dimen.main_screen_popup_button_type_padding_vertical),
@@ -476,7 +482,8 @@ fun CustomDialog(
                                 else BorderStroke(0.dp, Color.Transparent)
                             ) {
                                 Text(
-                                    text = stringResource(id = R.string.main_screen_dialog_negative),
+                                    text = stringResource(id = R.string.main_screen_dialog_negative).uppercase(),
+                                    style = MaterialTheme.typography.headlineSmall,
                                     modifier = Modifier
                                         .padding(
                                             vertical = dimensionResource(id = R.dimen.main_screen_popup_button_type_padding_vertical),
@@ -496,21 +503,26 @@ fun CustomDialog(
 
                         Spacer(modifier = Modifier.fillMaxHeight(0.03f))
 
-                        TextField(
+                        BasicTextField(
                             value = text,
                             onValueChange = {
                                 text = it
                             },
                             modifier = Modifier
-                                .fillMaxWidth(0.9f),
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                focusedTextColor = MaterialTheme.colorScheme.primary,
-                                unfocusedTextColor = MaterialTheme.colorScheme.primary
+                                .fillMaxWidth(0.9f)
+                                .drawBehind {
+                                    val strokeWidth = 2
+                                    val y = size.height - strokeWidth / 2
+                                    drawLine(
+                                        color = Blue,
+                                        start = Offset(0f, y),
+                                        end = Offset(size.width, y),
+                                        strokeWidth = 4f
+                                    )
+                                },
+                            textStyle = MaterialTheme.typography.headlineSmall.copy(
+                                color = MaterialTheme.colorScheme.primary
                             ),
-                            textStyle = MaterialTheme.typography.headlineSmall,
                         )
 
                         Spacer(modifier = Modifier.fillMaxHeight(0.03f))
@@ -626,12 +638,6 @@ fun CustomDialog(
     }
 }
 
-@Composable
-fun keyboardAsState(): State<Boolean> {
-    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    return rememberUpdatedState(isImeVisible)
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(
@@ -649,10 +655,12 @@ fun DatePickerDialog(
             DatePicker(
                 state = datePickerState,
                 colors = DatePickerDefaults.colors(
-                    titleContentColor = MaterialTheme.colorScheme.onBackground,
-                    headlineContentColor = MaterialTheme.colorScheme.onBackground,
-                    weekdayContentColor = MaterialTheme.colorScheme.onBackground,
-                    dayContentColor = MaterialTheme.colorScheme.onBackground
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    headlineContentColor = MaterialTheme.colorScheme.primary,
+                    weekdayContentColor = MaterialTheme.colorScheme.primary,
+                    dayContentColor = MaterialTheme.colorScheme.primary,
+                    selectedDayContentColor = MaterialTheme.colorScheme.background,
+                    navigationContentColor = MaterialTheme.colorScheme.primary,
                 )
             )
             Row {
@@ -664,7 +672,7 @@ fun DatePickerDialog(
                 ) {
                     Text(
                         text = "Ok",
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 TextButton(
@@ -672,7 +680,7 @@ fun DatePickerDialog(
                 ) {
                     Text(
                         text = "Cancel",
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
