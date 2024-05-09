@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,6 +42,8 @@ fun SettingsScreen(
 fun SettingsScreenContent(
     onBackClick: () -> Unit = {}
 ) {
+    val uriHandler = LocalUriHandler.current
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -84,7 +87,7 @@ fun SettingsScreenContent(
         ) {
             Button(
                 onClick = {
-
+                    uriHandler.openUri("https://example.com/")
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
@@ -102,7 +105,7 @@ fun SettingsScreenContent(
 
             Button(
                 onClick = {
-
+                    uriHandler.openUri("https://example.com/")
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.9f)

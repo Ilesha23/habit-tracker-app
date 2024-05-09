@@ -6,7 +6,9 @@
 
     <!-- OnBoarding screen -->
     <string name="onboarding_screen_welcome">Welcome!</string>
-    <string name="onboarding_screen_info">By clicking accept, you agree to our privacy policy, which sets out what data we collect and process.</string>
+    <string name="onboarding_screen_info_first_part">By clicking accept, you agree to our</string>
+    <string name="onboarding_screen_info_second_part">privacy policy</string>
+    <string name="onboarding_screen_info_third_part">, which sets out what data we collect and process.</string>
     <string name="onboarding_screen_button_accept">Accept</string>
 
     <!-- Main Screen -->
