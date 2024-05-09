@@ -1,4 +1,4 @@
-package com.ilesha23.habittracker.ui.common
+package com.ilesha23.habittracker.data.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class Session @Inject constructor(private val dataStore: DataStore<Preferences>) {
+class DataStoreManager @Inject constructor(private val dataStore: DataStore<Preferences>) {
 
     companion object {
         const val DATA = "Data"

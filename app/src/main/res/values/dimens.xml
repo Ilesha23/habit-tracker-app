@@ -7,6 +7,13 @@
 
     <!-- Main screen -->
     <dimen name="main_screen_header_padding_start">10dp</dimen>
+    <dimen name="main_screen_spacer_height">12dp</dimen>
+    <dimen name="main_screen_list_items_spacer_height">15dp</dimen>
+    <dimen name="main_screen_item_card_padding">20dp</dimen>
+    <dimen name="main_screen_item_card_text_start_padding">10dp</dimen>
+    <dimen name="main_screen_popup_button_type_padding_vertical">5dp</dimen>
+    <dimen name="main_screen_popup_button_type_padding_horizontal">10dp</dimen>
+    <dimen name="main_screen_popup_button_padding_vertical">6dp</dimen>
 
     <!-- Settings screen -->
     <dimen name="settings_screen_button_padding">15dp</dimen>

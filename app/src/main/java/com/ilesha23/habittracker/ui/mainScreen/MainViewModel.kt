@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ilesha23.habittracker.data.model.HabitItem
 import com.ilesha23.habittracker.data.repository.Repository
-import com.ilesha23.habittracker.ui.common.Session
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,8 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: Repository,
-    private val dataStore: Session
+    private val repository: Repository
 ) : ViewModel() {
     val activeList = MutableStateFlow<List<HabitItem>>(emptyList())
     val archiveList = MutableStateFlow<List<HabitItem>>(emptyList())

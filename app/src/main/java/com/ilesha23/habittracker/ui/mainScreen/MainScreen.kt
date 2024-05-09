@@ -203,14 +203,14 @@ fun MainScreenContent(
                         .padding(start = dimensionResource(id = R.dimen.main_screen_header_padding_start))
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.main_screen_spacer_height)))
 
                 for (i in activeList) {
                     HabitItem(i)
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.main_screen_list_items_spacer_height)))
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.main_screen_spacer_height)))
 
                 Text(
                     text = stringResource(id = R.string.main_screen_archive_habits).uppercase(),
@@ -220,11 +220,11 @@ fun MainScreenContent(
                         .padding(start = dimensionResource(id = R.dimen.main_screen_header_padding_start))
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.main_screen_spacer_height)))
 
                 for (i in archiveList) {
                     HabitItem(i)
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.main_screen_list_items_spacer_height)))
                 }
 
             }
@@ -254,14 +254,14 @@ fun HabitItem(
 
         Column(
             modifier = Modifier
-                .padding(20.dp)
+                .padding(dimensionResource(id = R.dimen.main_screen_item_card_padding))
         ) {
 
             Text(
                 text = item.name,
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier
-                    .padding(start = 10.dp)
+                    .padding(start = dimensionResource(id = R.dimen.main_screen_item_card_text_start_padding))
             )
 
             Row(
@@ -454,7 +454,10 @@ fun CustomDialog(
                                 Text(
                                     text = stringResource(id = R.string.main_screen_dialog_positive),
                                     modifier = Modifier
-                                        .padding(vertical = 5.dp, horizontal = 10.dp)
+                                        .padding(
+                                            vertical = dimensionResource(id = R.dimen.main_screen_popup_button_type_padding_vertical),
+                                            horizontal = dimensionResource(id = R.dimen.main_screen_popup_button_type_padding_horizontal)
+                                        )
                                 )
                             }
                             Button(
@@ -475,7 +478,10 @@ fun CustomDialog(
                                 Text(
                                     text = stringResource(id = R.string.main_screen_dialog_negative),
                                     modifier = Modifier
-                                        .padding(vertical = 5.dp, horizontal = 10.dp)
+                                        .padding(
+                                            vertical = dimensionResource(id = R.dimen.main_screen_popup_button_type_padding_vertical),
+                                            horizontal = dimensionResource(id = R.dimen.main_screen_popup_button_type_padding_horizontal)
+                                        )
                                 )
                             }
                         }
@@ -586,7 +592,7 @@ fun CustomDialog(
                             style = MaterialTheme.typography.headlineLarge,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
-                                .padding(vertical = 6.dp)
+                                .padding(vertical = dimensionResource(id = R.dimen.main_screen_popup_button_padding_vertical))
                         )
                     }
 
@@ -609,7 +615,7 @@ fun CustomDialog(
                             style = MaterialTheme.typography.headlineLarge,
                             color = MaterialTheme.colorScheme.background,
                             modifier = Modifier
-                                .padding(vertical = 6.dp)
+                                .padding(vertical = dimensionResource(id = R.dimen.main_screen_popup_button_padding_vertical))
                         )
                     }
                 }

@@ -2,7 +2,7 @@ package com.ilesha23.habittracker.ui.splashScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ilesha23.habittracker.ui.common.Session
+import com.ilesha23.habittracker.data.datastore.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val dataStore: Session
+    private val dataStore: DataStoreManager
 ) : ViewModel() {
 
     val isUserAccepted = MutableStateFlow<Boolean?>(null)
