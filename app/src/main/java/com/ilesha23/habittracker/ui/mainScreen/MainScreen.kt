@@ -33,7 +33,9 @@ import com.ilesha23.habittracker.ui.theme.abeezeeFontFamily
 import com.ilesha23.habittracker.ui.theme.actorFontFamily
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+
+) {
     MainScreenContent()
 }
 
@@ -45,7 +47,7 @@ fun MainScreenContent() {
             .background(
                 color = MaterialTheme.colorScheme.background
             ),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -154,7 +156,7 @@ fun HabitItem(
     dateStarted: String = "01\nJAN\n2000",
     havePassed: String = "6\ndays",
     dateCutOff: String = "10\nMAR\n2001",
-    isGood: Boolean = true,
+    isPositive: Boolean = true,
     isArchive: Boolean = false
 ) {
     Surface(
@@ -162,12 +164,12 @@ fun HabitItem(
             .fillMaxWidth(),
         color =
         if (isArchive) MaterialTheme.colorScheme.tertiaryContainer
-        else if (isGood) MaterialTheme.colorScheme.primaryContainer
+        else if (isPositive) MaterialTheme.colorScheme.primaryContainer
         else MaterialTheme.colorScheme.secondaryContainer,
         shape = RoundedCornerShape(30),
         border =
         if (isArchive) BorderStroke(2.dp, MaterialTheme.colorScheme.tertiary)
-        else if (isGood) BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer)
+        else if (isPositive) BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer)
         else BorderStroke(2.dp, MaterialTheme.colorScheme.secondaryContainer)
     ) {
 
