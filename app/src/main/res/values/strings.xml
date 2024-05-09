@@ -15,5 +15,13 @@
     <string name="main_screen_started">started on</string>
     <string name="main_screen_passed">have passed</string>
     <string name="main_screen_cutoff">cut-off date</string>
+    <string name="main_screen_dialog_header">Select type of habit</string>
+    <string name="main_screen_dialog_positive">Positive</string>
+    <string name="main_screen_dialog_negative">Negative</string>
+    <string name="main_screen_dialog_habit_name">Name of new habit</string>
+    <string name="main_screen_dialog_start">Start is</string>
+    <string name="main_screen_dialog_finish">Finish is</string>
+    <string name="main_screen_dialog_cancel">Cancel</string>
+    <string name="main_screen_dialog_accept">Accept</string>
 
 </resources>

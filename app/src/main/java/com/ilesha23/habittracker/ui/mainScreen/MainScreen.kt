@@ -1,46 +1,129 @@
 package com.ilesha23.habittracker.ui.mainScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ilesha23.habittracker.R
+import com.ilesha23.habittracker.data.model.HabitItem
 import com.ilesha23.habittracker.ui.theme.abeezeeFontFamily
 import com.ilesha23.habittracker.ui.theme.actorFontFamily
 
 @Composable
 fun MainScreen(
-
+    viewModel: MainViewModel = hiltViewModel()
 ) {
-    MainScreenContent()
+    var shouldShowDialog by rememberSaveable { mutableStateOf(false) }
+    val startDateFormatted = viewModel.dateStartFormatted.collectAsState().value
+    val finishDateFormatted = viewModel.dateFinishFormatted.collectAsState().value
+    val startDate = viewModel.dateStart.collectAsState().value
+    val finishDate = viewModel.dateFinish.collectAsState().value
+    val activeList = viewModel.activeList.collectAsState().value
+    val archiveList = viewModel.archiveList.collectAsState().value
+
+    BackHandler {
+        // TODO:
+    }
+
+
+    if (shouldShowDialog) {
+        CustomDialog(
+            dateStartFormatted = startDateFormatted,
+            dateFinishFormatted = finishDateFormatted,
+            startDate = startDate,
+            finishDate = finishDate,
+            onStartDateSubmit = {
+                viewModel.updateDateStart(it)
+            },
+            onFinishDateSubmit = {
+                viewModel.updateDateFinish(it)
+            },
+            onDismissRequest = {
+                shouldShowDialog = false
+            },
+            onAcceptClick = { isPositive, name, start, finish ->
+                viewModel.insert(
+                    type = isPositive,
+                    name = name,
+                    dateStart = start,
+                    dateFinish = finish
+                )
+                shouldShowDialog = false
+            }
+        )
+    }
+    MainScreenContent(
+        activeList = activeList,
+        archiveList = archiveList,
+        onDialogClick = {
+            shouldShowDialog = true
+        }
+    )
 }
 
 @Composable
-fun MainScreenContent() {
+fun MainScreenContent(
+    activeList: List<HabitItem>,
+    archiveList: List<HabitItem>,
+    onDialogClick: () -> Unit = {}
+) {
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,7 +166,7 @@ fun MainScreenContent() {
                 }
                 IconButton(
                     onClick = {
-
+                        onDialogClick()
                     },
                     modifier = Modifier
                         .fillMaxHeight()
@@ -103,44 +186,42 @@ fun MainScreenContent() {
 
             Spacer(modifier = Modifier.fillMaxHeight(0.03f))
 
-            LazyColumn(
+            Column(
                 modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
 
-                item {
-                    Text(
-                        text = stringResource(id = R.string.main_screen_active_habits).uppercase(),
-                        style = MaterialTheme.typography.displaySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(start = dimensionResource(id = R.dimen.main_screen_header_padding_start))
-                    )
+                Text(
+                    text = stringResource(id = R.string.main_screen_active_habits).uppercase(),
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(start = dimensionResource(id = R.dimen.main_screen_header_padding_start))
+                )
 
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
+                Spacer(modifier = Modifier.height(12.dp))
 
-                items(10) {
-                    HabitItem()
+                for (i in activeList) {
+                    HabitItem(i)
                     Spacer(modifier = Modifier.height(15.dp))
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                    Text(
-                        text = stringResource(id = R.string.main_screen_archive_habits).uppercase(),
-                        style = MaterialTheme.typography.displaySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(start = dimensionResource(id = R.dimen.main_screen_header_padding_start))
-                    )
+                Text(
+                    text = stringResource(id = R.string.main_screen_archive_habits).uppercase(),
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(start = dimensionResource(id = R.dimen.main_screen_header_padding_start))
+                )
 
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
+                Spacer(modifier = Modifier.height(12.dp))
 
-                items(10) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    HabitItem()
+                for (i in archiveList) {
+                    HabitItem(i)
+                    Spacer(modifier = Modifier.height(15.dp))
                 }
 
             }
@@ -152,24 +233,19 @@ fun MainScreenContent() {
 
 @Composable
 fun HabitItem(
-    name: String = "Drink water every day",
-    dateStarted: String = "01\nJAN\n2000",
-    havePassed: String = "6\ndays",
-    dateCutOff: String = "10\nMAR\n2001",
-    isPositive: Boolean = true,
-    isArchive: Boolean = false
+    item: HabitItem
 ) {
     Surface(
         modifier = Modifier
             .fillMaxWidth(),
         color =
-        if (isArchive) MaterialTheme.colorScheme.tertiaryContainer
-        else if (isPositive) MaterialTheme.colorScheme.primaryContainer
+        if (item.isArchive) MaterialTheme.colorScheme.tertiaryContainer
+        else if (item.isPositive) MaterialTheme.colorScheme.primaryContainer
         else MaterialTheme.colorScheme.secondaryContainer,
         shape = RoundedCornerShape(30),
         border =
-        if (isArchive) BorderStroke(2.dp, MaterialTheme.colorScheme.tertiary)
-        else if (isPositive) BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer)
+        if (item.isArchive) BorderStroke(2.dp, MaterialTheme.colorScheme.tertiary)
+        else if (item.isPositive) BorderStroke(2.dp, MaterialTheme.colorScheme.primaryContainer)
         else BorderStroke(2.dp, MaterialTheme.colorScheme.secondaryContainer)
     ) {
 
@@ -179,8 +255,10 @@ fun HabitItem(
         ) {
 
             Text(
-                text = name,
-                style = MaterialTheme.typography.headlineLarge
+                text = item.name,
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier
+                    .padding(start = 10.dp)
             )
 
             Row(
@@ -202,7 +280,7 @@ fun HabitItem(
                     )
                     Spacer(modifier = Modifier.fillMaxHeight(0.01f))
                     Text(
-                        text = dateStarted,
+                        text = item.formattedStartedDate,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontFamily = abeezeeFontFamily,
@@ -223,7 +301,7 @@ fun HabitItem(
                     )
                     Spacer(modifier = Modifier.fillMaxHeight(0.01f))
                     Text(
-                        text = havePassed,
+                        text = item.daysPassed.toString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontFamily = abeezeeFontFamily,
@@ -244,7 +322,7 @@ fun HabitItem(
                     )
                     Spacer(modifier = Modifier.fillMaxHeight(0.01f))
                     Text(
-                        text = dateCutOff,
+                        text = item.formattedCutoffDate,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontFamily = abeezeeFontFamily,
@@ -256,5 +334,339 @@ fun HabitItem(
 
         }
 
+    }
+}
+
+@Composable
+fun CustomDialog(
+    dateStartFormatted: String,
+    dateFinishFormatted: String,
+    startDate: Long,
+    finishDate: Long,
+    onStartDateSubmit: (Long) -> Unit = {},
+    onFinishDateSubmit: (Long) -> Unit = {},
+    onDismissRequest: () -> Unit = {},
+    onAcceptClick: (Boolean, String, Long, Long) -> Unit = { _, _, _, _ -> }
+) {
+    var isPositive by remember { mutableStateOf(true) }
+    var text by remember { mutableStateOf("") }
+    var showDateStartDialog by remember { mutableStateOf(false) }
+    var showDateFinishDialog by remember { mutableStateOf(false) }
+
+    val isKeyboardOpened by keyboardAsState()
+
+    if (showDateStartDialog) {
+        DatePickerDialog(
+            currentDate = startDate,
+            onSubmitDate = {
+                onStartDateSubmit(it)
+            },
+            onDismissRequest = {
+                showDateStartDialog = false
+            }
+        )
+    }
+
+    if (showDateFinishDialog) {
+        DatePickerDialog(
+            currentDate = finishDate,
+            onSubmitDate = {
+                onFinishDateSubmit(it)
+            },
+            onDismissRequest = {
+                showDateFinishDialog = false
+            }
+        )
+    }
+
+    Popup(
+        alignment = Alignment.Center,
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        properties = PopupProperties(
+            focusable = true
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = MaterialTheme.colorScheme.onTertiary
+                ),
+            contentAlignment =
+            if (isKeyboardOpened) {
+                Alignment.TopCenter
+            } else Alignment.Center
+        ) {
+
+            Column(
+                modifier = Modifier.fillMaxWidth(0.9f)
+            ) {
+
+                Surface(
+                    shape = RoundedCornerShape(15),
+                    color = MaterialTheme.colorScheme.background,
+                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Spacer(modifier = Modifier.fillMaxHeight(0.03f))
+
+                        Text(
+                            text = stringResource(id = R.string.main_screen_dialog_header).uppercase(),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+
+                        Spacer(modifier = Modifier.fillMaxHeight(0.03f))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Button(
+                                onClick = {
+                                    isPositive = true
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                ),
+                                shape = RoundedCornerShape(45),
+                                border =
+                                if (isPositive) BorderStroke(
+                                    2.dp,
+                                    MaterialTheme.colorScheme.primaryContainer
+                                )
+                                else BorderStroke(0.dp, Color.Transparent)
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.main_screen_dialog_positive),
+                                    modifier = Modifier
+                                        .padding(vertical = 5.dp, horizontal = 10.dp)
+                                )
+                            }
+                            Button(
+                                onClick = {
+                                    isPositive = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                ),
+                                shape = RoundedCornerShape(45),
+                                border =
+                                if (!isPositive) BorderStroke(
+                                    2.dp,
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                )
+                                else BorderStroke(0.dp, Color.Transparent)
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.main_screen_dialog_negative),
+                                    modifier = Modifier
+                                        .padding(vertical = 5.dp, horizontal = 10.dp)
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.fillMaxHeight(0.04f))
+
+                        Text(
+                            text = stringResource(id = R.string.main_screen_dialog_habit_name).uppercase(),
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+
+                        Spacer(modifier = Modifier.fillMaxHeight(0.03f))
+
+                        TextField(
+                            value = text,
+                            onValueChange = {
+                                text = it
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth(0.9f),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                unfocusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                focusedTextColor = MaterialTheme.colorScheme.primary,
+                                unfocusedTextColor = MaterialTheme.colorScheme.primary
+                            ),
+                            textStyle = MaterialTheme.typography.headlineSmall,
+                        )
+
+                        Spacer(modifier = Modifier.fillMaxHeight(0.03f))
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.main_screen_dialog_start).uppercase(),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Spacer(modifier = Modifier.fillMaxHeight(0.03f))
+                                Text(
+                                    text = dateStartFormatted,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textDecoration = TextDecoration.Underline,
+                                    modifier = Modifier
+                                        .clickable {
+                                            showDateStartDialog = true
+                                        }
+                                )
+                            }
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.main_screen_dialog_finish).uppercase(),
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Spacer(modifier = Modifier.fillMaxHeight(0.03f))
+                                Text(
+                                    text = dateFinishFormatted,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textDecoration = TextDecoration.Underline,
+                                    modifier = Modifier
+                                        .clickable {
+                                            showDateFinishDialog = true
+                                        }
+                                )
+                            }
+
+                        }
+
+                        Spacer(modifier = Modifier.fillMaxHeight(0.06f))
+
+                    }
+
+                }
+
+                Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = {
+                            onDismissRequest()
+                        },
+                        modifier = Modifier
+                            .weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.main_screen_dialog_cancel).uppercase(),
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .padding(vertical = 6.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(0.1f))
+
+                    Button(
+                        onClick = {
+                            onAcceptClick(
+                                isPositive,
+                                text,
+                                startDate,
+                                finishDate
+                            )
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.onboarding_screen_button_accept).uppercase(),
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = MaterialTheme.colorScheme.background,
+                            modifier = Modifier
+                                .padding(vertical = 6.dp)
+                        )
+                    }
+                }
+
+            }
+
+        }
+    }
+}
+
+@Composable
+fun keyboardAsState(): State<Boolean> {
+    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    return rememberUpdatedState(isImeVisible)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerDialog(
+    currentDate: Long,
+    onDismissRequest: () -> Unit,
+    onSubmitDate: (Long) -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.background)) {
+            val datePickerState =
+                rememberDatePickerState(initialSelectedDateMillis = currentDate)
+            DatePicker(
+                state = datePickerState,
+                colors = DatePickerDefaults.colors(
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                    headlineContentColor = MaterialTheme.colorScheme.onBackground,
+                    weekdayContentColor = MaterialTheme.colorScheme.onBackground,
+                    dayContentColor = MaterialTheme.colorScheme.onBackground
+                )
+            )
+            Row {
+                TextButton(
+                    onClick = {
+                        onDismissRequest()
+                        onSubmitDate(datePickerState.selectedDateMillis ?: 0)
+                    }
+                ) {
+                    Text(
+                        text = "Ok",
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                TextButton(
+                    onClick = onDismissRequest
+                ) {
+                    Text(
+                        text = "Cancel",
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        }
     }
 }

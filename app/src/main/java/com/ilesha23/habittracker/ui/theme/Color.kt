@@ -3,6 +3,7 @@ package com.ilesha23.habittracker.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val White = Color(0xFFFFFFFF)
+val HalfTransparentBlue = Color(0x600F7EAA)
 val LightBlue = Color(0xFFBEEDFF)
 val Blue = Color(0xFF0F7EAA)
 val LightGreen = Color(0x4052B083)

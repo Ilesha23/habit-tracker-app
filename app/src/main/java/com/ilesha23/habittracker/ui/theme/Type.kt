@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.ilesha23.habittracker.R
 
@@ -48,16 +49,17 @@ val Typography = Typography(
     headlineMedium = TextStyle(
         fontFamily = abeezeeFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 25.sp,
-        lineHeight = 30.sp,
+        fontSize = 20.sp,
+        lineHeight = 25.sp,
         letterSpacing = 0.5.sp
     ),
     headlineSmall = TextStyle(
         fontFamily = abeezeeFontFamily,
         fontWeight = FontWeight.Normal,
-        fontSize = 20.sp,
+        fontSize = 18.sp,
         lineHeight = 23.sp,
-        letterSpacing = 0.5.sp
+        letterSpacing = 0.5.sp,
+        textAlign = TextAlign.Center
     ),
     labelMedium = TextStyle(
         fontFamily = abeezeeFontFamily,

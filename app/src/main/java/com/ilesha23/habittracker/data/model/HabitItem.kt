@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 @Entity
@@ -16,15 +15,15 @@ data class HabitItem(
     val isPositive: Boolean = true
 ) {
     val formattedStartedDate: String
-        get() = SimpleDateFormat("dd\nMMM\nyyyy", Locale.getDefault()).format(dateStarted)
+        get() = SimpleDateFormat("dd\nMMM\nyyyy", Locale.getDefault()).format(dateStarted).uppercase()
 
     val formattedCutoffDate: String
-        get() = SimpleDateFormat("dd\nMMM\nyyyy", Locale.getDefault()).format(dateCutOff)
+        get() = SimpleDateFormat("dd\nMMM\nyyyy", Locale.getDefault()).format(dateCutOff).uppercase()
 
     val daysPassed: Long
         get() = ((Calendar.getInstance().time.time - dateStarted) / (1000 * 60 * 60 * 24))
 
     val isArchive: Boolean
-        get() = Calendar.getInstance().time.after(Date(dateCutOff))
+        get() = dateCutOff < System.currentTimeMillis()
 
 }
