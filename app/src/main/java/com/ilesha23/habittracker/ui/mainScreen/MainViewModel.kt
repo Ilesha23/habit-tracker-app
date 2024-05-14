@@ -1,12 +1,14 @@
 package com.ilesha23.habittracker.ui.mainScreen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ilesha23.habittracker.data.model.HabitItem
 import com.ilesha23.habittracker.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -17,8 +19,18 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
-    val activeList = MutableStateFlow<List<HabitItem>>(emptyList())
-    val archiveList = MutableStateFlow<List<HabitItem>>(emptyList())
+    val list =
+        repository.list.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    val activeList = list.map {
+        it.filter {
+            !it.isArchive
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    val archiveList = list.map {
+        it.filter {
+            it.isArchive
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     val type = MutableStateFlow(true)
     val name = MutableStateFlow("")
     val dateStart = MutableStateFlow(System.currentTimeMillis())
@@ -39,28 +51,6 @@ class MainViewModel @Inject constructor(
                 Locale.getDefault()
             ).format(dateFinish.value)
         )
-
-    init {
-        updateLists()
-    }
-
-    private fun updateLists() {
-        viewModelScope.launch {
-            val list = repository.getAll()
-
-            activeList.update {
-                list.filter {
-                    !it.isArchive
-                }
-            }
-            archiveList.update {
-                list.filter {
-                    it.isArchive
-                }
-            }
-            Log.d("LOG_TAG", archiveList.value.toString())
-        }
-    }
 
     fun insert(type: Boolean, name: String, dateStart: Long, dateFinish: Long) {
         this.type.update {
@@ -83,7 +73,6 @@ class MainViewModel @Inject constructor(
         )
         viewModelScope.launch {
             repository.insert(item)
-            updateLists()
         }
     }
 
